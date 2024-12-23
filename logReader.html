@@ -1,0 +1,1426 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link rel="icon" href="log.png" type="image/png">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logger</title>
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+      rel="stylesheet">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.2/css/all.min.css"
+      integrity="sha512-1sCRPdkRXhBV2PBLUdRb4tMg1w2YPf37qatUFeS7zlBy7jJI8Lf4VHwWfZZfpXtYSLy85pkm9GaYVYMfw5BC1A=="
+      crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <style>
+        body {
+          transition: background-color 0.3s, color 0.3s;
+        }
+
+        body.light-mode {
+          background-color: #ffffff;
+          color: #000000;
+        }
+
+        body.dark-mode {
+          background-color: #121212;
+          color: #d9d9d9;
+        }
+
+        body.dark-mode .container {
+          background-color: #1e1e1e;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-mode .filter-group {
+          background-color: #565656;
+          box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-mode label {
+          color: #d9d9d9;
+        }
+
+        body.dark-mode td {
+        border: 1px solid #000000;
+      }
+
+        body.dark-mode table {
+          background-color: #2b2b2b;
+          border-color: #444;
+        }
+
+        /* body.dark-mode th {
+          background-color: #3e3e3e;
+          color: #fff;
+        } */
+
+        body.dark-mode tr:nth-child(even) {
+          background-color: #242424;
+        }
+
+        body.dark-mode tr:hover {
+          background-color: #333;
+        }
+
+        .theme-toggle {
+          position: fixed;
+          top: 10px;
+          right: 10px;
+          padding: 10px 20px;
+          background-color: #444;
+          color: #fff;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f6f8;
+        color: #333;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 80%;
+        background-color: #fff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        text-align: center;
+      }
+
+      h2 {
+        color: #4a90e2;
+      }
+
+      button {
+        padding: 10px 20px;
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        margin: 10px 5px;
+        font-size: 14px;
+      }
+
+      button:hover {
+        background-color: #357abd;
+      }
+
+      input[type="file"] {
+        padding: 10px;
+        background-color: #4a90e2;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+
+      input[type="file"]:hover {
+        background-color: #357abd;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        max-width: 100%;
+        margin-top: 20px;
+        border-radius: 8px;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        min-width: 600px;
+        background-color: #fafafa;
+        border-radius: 5px;
+        overflow: hidden;
+      }
+
+      table,
+      th,
+      td {
+        border: 1px solid #e0e0e0;
+      }
+
+      th,
+      td {
+        padding: 12px 15px;
+        text-align: left;
+        white-space: nowrap;
+        position: relative;
+      }
+
+      th {
+        background-color: #4a90e2;
+        color: white;
+        position: sticky;
+        top: 0;
+        z-index: 1;
+        cursor: pointer; /* Make the header clickable */
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      .expand-btn {
+        cursor: pointer;
+        color: #4a90e2;
+        background: none;
+        border: none;
+        font-size: 12px;
+        padding: 0;
+        margin-left: 5px;
+        text-decoration: underline;
+      }
+
+      /* Style for multiline expanded content */
+      .multiline-content {
+        white-space: pre-wrap;
+        word-wrap: break-word;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+        padding: 5px;
+        max-height: none; /* Allow it to expand fully */
+        overflow-y: hidden; /* Prevent overflow */
+        margin-top: 5px;
+      }
+
+      .sort-indicator {
+        font-size: 12px; /* Adjust size for sort indicator */
+        margin-left: 5px;
+      }
+
+      /* Dropdown Styles */
+      select {
+        padding: 10px;
+        margin: 10px 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      .filter-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+        margin-top: 20px;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 10px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      select,
+      input[type="text"],
+      input[type="date"] {
+        width: 200px;
+        padding: 8px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      label {
+        font-size: 14px;
+        color: #333;
+        margin-top: 5px;
+      }
+
+      .filter-container label,
+      .filter-container select,
+      .filter-container input[type="text"],
+      .filter-container input[type="date"] {
+        text-align: left;
+      }
+
+      .multiline-content .default {
+  color: #ffffff; /* White for default symbols like {}, [], , */
+}
+
+      .multiline-content {
+  background-color: #212121; /* Gray background like Postman */
+  padding: 10px;
+  border-radius: 5px;
+  overflow-x: auto; /* Enable horizontal scrolling */
+  white-space: pre; /* Prevent text wrapping */
+  font-family: monospace;
+}
+
+.multiline-content .key {
+  color: #9cdcfe; /* Blue for keys */
+}
+
+.multiline-content .string {
+  color: #ce9178; /* Orange for strings */
+}
+
+.multiline-content .number {
+  color: #ffd700; /* Yellow for numbers */
+}
+
+.multiline-content .boolean {
+  color: #ff4500; /* Red-orange for booleans */
+}
+
+.multiline-content .null {
+  color: #808080; /* Gray for null */
+}
+
+input[type="file"] {
+    display: flex;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Optional button shadow */
+}
+
+.upload-button span {
+    font-size: 16px; 
+}
+
+
+.export-button {
+    display: flex;
+    flex-direction: column; /* Stack icon and text vertically */
+    align-items: center; /* Center content horizontally */
+    justify-content: center; /* Center content vertically */
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 30px 40px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Optional button shadow */
+}
+
+.export-button i {
+    font-size: 40px; /* Larger icon size */
+    margin-bottom: 10px; /* Space between icon and text */
+}
+
+.export-button span {
+    font-size: 16px; /* Slightly larger text size */
+}
+
+.export-button:hover {
+    background-color: #45a049;
+}
+
+
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  border: none;
+  background: none;
+  font-size: 24px;
+  cursor: pointer;
+  outline: none;
+}
+
+.theme-toggle:hover,
+.theme-toggle:focus {
+  background: none;
+  color: inherit;
+  outline: none;
+}
+
+
+
+body.light-mode #icon-sun {
+  color: #f9d71c; /* Bright yellow to make the sun visible */
+}
+
+body.dark-mode #icon-sun {
+  display: none; /* Hide the sun icon in dark mode */
+}
+
+body.dark-mode #icon-moon {
+  color: #ffffff; /* White for the moon icon in dark mode */
+}
+
+body.light-mode #icon-moon {
+  display: none; 
+}
+
+
+.button {
+      display: flex; /* Use flexbox for centering */
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin-top: 10px;
+      width: 187.6px; /* Adjust width */
+      height: 316.67px; /* Add more height */
+      text-align: center;
+      color: white;
+      font-size: 16px;
+      border-radius: 8px; /* Rounded corners */
+      cursor: pointer;
+      border: none;
+      outline: none;
+      background-color: #4a90e2; /* Blue color */
+      transition: background-color 0.3s ease;
+    }
+
+    /* Hover effect for button */
+    .button:hover {
+      background-color: #357abd;
+    }
+
+    /* Hidden file input */
+    #fileInput {
+      display: none;
+    }
+
+    /* Icon styling */
+    .button i {
+      font-size: 36px; /* Icon size */
+      margin-bottom: 10px;
+    }
+
+.content {
+    position: relative; 
+    z-index: 1;        
+}
+
+
+      @media (max-width: 600px) {
+        select,
+        input[type="text"],
+        input[type="date"] {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <img src="log.png" alt="Description of Image"
+        style="width: 10%; height: auto;">
+      <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="icon-sun" class="icon"
+          style="font-size: 50px; ">&#x1F506;</span>
+        <span id="icon-moon" class="icon"
+          style="font-size: 50px; color:#ffffff">&#x1F319;</span>
+      </button>
+      <div id="output"></div>
+      <div class="filter-container">
+        <!-- group 1 -->
+        <div class="filter-group">
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="methodFilter">Method</label>
+          <select id="methodFilter">
+            <option value>Select Method</option>
+          </select>
+
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="statusFilter">Status</label>
+          <select id="statusFilter">
+            <option value>Select Status</option>
+          </select>
+
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="serviceNameFilter">Service Name</label>
+          <select id="serviceNameFilter">
+            <option value>Select Service Name</option>
+          </select>
+        </div>
+        <!-- group 2 -->
+        <div class="filter-group">
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="requestIDFilter">Request ID</label>
+          <input
+            type="text"
+            id="requestIDFilter"
+            placeholder="Search by Request ID" />
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="customerUuidFilter">Customer UUID</label>
+          <input
+            type="text"
+            id="customerUuidFilter"
+            placeholder="Search by Customer UUID" />
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="usernameFilter">Username</label>
+          <input
+            type="text"
+            id="usernameFilter"
+            placeholder="Search by Username" />
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="apiVersionFilter">x-api-version</label>
+          <input
+            type="text"
+            id="apiVersionFilter"
+            placeholder="Search by x-api-version" />
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="appVersionFilter">x-app-version</label>
+          <input
+            type="text"
+            id="appVersionFilter"
+            placeholder="Search by x-app-version" />
+        </div>
+        <!-- group 3 -->
+        <div class="filter-group">
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="sourceFilter">Source</label>
+          <input type="text" id="sourceFilter" placeholder="Search by Source" />
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="endpointFilter">Endpoint</label>
+          <input
+            type="text"
+            id="endpointFilter"
+            placeholder="Search by Endpoint" />
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="HeaderFilter">Header</label>
+          <input type="text" id="HeaderFilter" placeholder="Search by Header" />
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="RequestDataFilter">RequestData</label>
+          <input
+            type="text"
+            id="RequestDataFilter"
+            placeholder="Search by RequestData" />
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="ResponseDataFilter">ResponseData</label>
+          <input
+            type="text"
+            id="ResponseDataFilter"
+            placeholder="Search by ResponseData" />
+        </div>
+        <!-- group 4 -->
+        <div class="filter-group">
+          <label style="font-weight: 1000; font-size: 16px;"
+            for="createdAtStart">Date</label>
+          <input type="date" id="createdAtStart" />
+          <button onclick="clearFilters()">Clear Filters</button>
+        </div>
+        <label for="fileInput" class="button upload-button">
+          <span class="upload-button">Choose File</span>
+          <i class="fas fa-file-upload" style="margin-top: 30px;"></i>
+        </label>
+        <input type="file" id="fileInput" multiple accept=".json, .xls, .xlsx">
+        <button onclick="exportJSONToXLSX()" class="export-button">
+          <span>Export to Excel</span>
+          <i class="fas fa-file-download" style="margin-top: 30px;"></i>
+        </button> <script src="exportTable.js"></script>
+      </div>
+
+      <div class="table-container">
+        <table id="jsonTable">
+          <thead id="tableHead"></thead>
+          <tbody id="tableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="pagination" id="pagination">
+        <label for="rowsPerPage">Rows per page:</label>
+        <select id="rowsPerPage">
+          <option value="10">10</option>
+          <option value="25" selected>25</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="250">250</option>
+          <option value="500">500</option>
+          <option value="1000">1000</option>
+          <option value="10000">10000</option>
+          <option value="100000">100000</option>
+          <option value="99999999999">ALL</option>
+        </select>
+        <button id="prevPage" onclick="changePage(-1)" disabled>
+          Previous
+        </button>
+        <span id="pageInfo"></span>
+        <button id="nextPage" onclick="changePage(1)" disabled>Next</button>
+      </div>
+    </div>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.3/xlsx.full.min.js"></script>
+    <script>
+
+      let jsonData = []; 
+      let filteredData = []; 
+      let currentPage = 1;
+      let rowsPerPage = 25; 
+      let url = ''
+      const truncateLimit = 30; 
+      const expandableKeys = ["header", "requestData", "responseData"]; 
+      const copyKey = ["source", "customerUuid", "requestID", "username"]; 
+      const sortDirection = {}; 
+    
+      document
+        .getElementById("fileInput")
+        .addEventListener("change", handleFileUpload);
+      document
+        .getElementById("methodFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("statusFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("serviceNameFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("requestIDFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("customerUuidFilter")
+        .addEventListener("change", updateTable);
+        document
+        .getElementById("usernameFilter")
+        .addEventListener("change", updateTable);
+        document
+        .getElementById("apiVersionFilter")
+        .addEventListener("change", updateTable);
+        document
+        .getElementById("appVersionFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("sourceFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("endpointFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("HeaderFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("RequestDataFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("ResponseDataFilter")
+        .addEventListener("change", updateTable);
+      document
+        .getElementById("createdAtStart")
+        .addEventListener("change", updateTable);
+     
+      document
+        .getElementById("rowsPerPage")
+        .addEventListener("change", function () {
+          rowsPerPage = parseInt(this.value); 
+          currentPage = 1; 
+          createTable(filteredData);
+          updatePagination(); 
+        });
+      function updatePagination() {
+        const pageCount = Math.ceil(filteredData.length / rowsPerPage); // Calculate total pages
+
+        document.getElementById("prevPage").disabled = currentPage === 1;
+        document.getElementById("nextPage").disabled =
+          currentPage * rowsPerPage >= filteredData.length;
+        document.getElementById(
+          "pageInfo"
+        ).textContent = `Page ${currentPage} of ${pageCount}`;
+      }
+      function handleFileUpload(event) {
+        const files = event.target.files;
+
+        if (files.length === 0) {
+          document.getElementById("output").innerText = "No file selected.";
+          return;
+        }
+
+        const jsonDataArray = [];
+        let filesProcessed = 0;
+
+        for (const file of files) {
+          const reader = new FileReader();
+
+          // Check file type
+          if (file.type === "application/json") {
+            // JSON file handling
+            reader.onload = function (e) {
+              try {
+                const rawJsonData = JSON.parse(e.target.result);
+                jsonDataArray.push(...rawJsonData); // Merge JSON data
+              } catch (error) {
+                document.getElementById("output").innerText =
+                  "Invalid JSON file.";
+              }
+              filesProcessed++;
+              if (filesProcessed === files.length) {
+                processMergedJsonData();
+              }
+            };
+            reader.readAsText(file);
+          } else if (
+            file.name.endsWith(".xls") ||
+            file.name.endsWith(".xlsx")
+          ) {
+            // Excel file handling
+            reader.onload = function (e) {
+              try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: "array" });
+                const sheetName = workbook.SheetNames[0];
+                const sheetData = XLSX.utils.sheet_to_json(
+                  workbook.Sheets[sheetName]
+                );
+                // sheetData.forEach((row) => {
+                //   if (row.createdAt) {
+                //     row.createdAt = excelDateToJSDate(
+                //       row.createdAt
+                //     ).toISOString();
+                //   }
+                //   if (row.created_at) {
+                //     row.createdAt = excelDateToJSDate(
+                //       row.created_at
+                //     ).toISOString();
+                //   }
+                // });
+                jsonDataArray.push(...sheetData); // Merge Excel data
+              } catch (error) {
+                console.log("error", error.message)
+                document.getElementById("output").innerText =
+                  "Invalid Excel file.";
+              }
+              filesProcessed++;
+              if (filesProcessed === files.length) {
+                processMergedJsonData();
+              }
+            };
+            reader.readAsArrayBuffer(file);
+          } else {
+            document.getElementById("output").innerText =
+              "Unsupported file format.";
+            return;
+          }
+        }
+
+        function processMergedJsonData() {
+          // Sort the merged JSON data by createdAt
+          jsonDataArray.sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
+
+          // Call your parsing function or handle the sorted data
+          parseData(jsonDataArray);
+        }
+      }
+      const toUTC7 = (dateString) => {
+        if (!dateString) return "-";
+        const date = new Date(dateString);
+        if (date == 'Invalid Date') {
+          return dateString
+        }
+        date.setHours(date.getHours()); // Adjust for UTC+7
+
+        // Extract individual components
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        const seconds = String(date.getSeconds()).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+        const year = date.getFullYear();
+
+        // Format as "H:M:S   D/M/Y"
+        return `${hours}:${minutes}:${seconds}  -  ${day}/${month}/${year}`;
+      };
+      const toUTC7FileName = () => {
+        const date = new Date();
+        date.setHours(date.getHours()); // Adjust for UTC+7
+
+        // Extract individual components
+        const hours = String(date.getHours()).padStart(2, "0");
+        const minutes = String(date.getMinutes()).padStart(2, "0");
+        const seconds = String(date.getSeconds()).padStart(2, "0");
+        const day = String(date.getDate()).padStart(2, "0");
+        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-indexed
+        const year = date.getFullYear();
+
+        // Format as "H:M:S   D/M/Y"
+        return `api_logs_${day}-${month}-${year}T${hours}-${minutes}-${seconds}.xlsx`;
+      };
+      function parseData(data) {
+        jsonData = data.map((log, index) => {
+          let headers = {};
+          try {
+            headers = log.header ? JSON.parse(log.header) : {};
+          } catch {
+            headers = log.header;
+          }
+          return {
+            id: index + 1,
+            username: log.username ?? "-",
+            customerUuid: log.customerUuid || log.customer_uuid || "-",
+            requestID: log.requestID || log.request_id,
+            serviceName: log.serviceName || log.service_name,
+            method: log.method,
+            status: Number(log.status),
+            endpoint: log.endpoint,
+            source: log.source,
+            header: log.header,
+            requestData: log.requestData || log.request_data,
+            responseData: log.responseData || log.response_data,
+            createdAt: toUTC7(log.createdAt || log.created_at),
+            ["x-app-version"]: headers?.["x-app-version"] ?? "-",
+            ["x-api-version"]: headers?.["x-api-version"] ?? "-",
+            ["x-request-time"]: headers?.["x-request-time"] ?? "-",
+          };
+        });
+
+        filteredData = jsonData; // Initialize filtered data
+        currentPage = 1;
+        populateDropdowns(jsonData);
+        createTable(filteredData);
+        updatePagination();
+      }
+      function populateDropdowns(data) {
+        const methodSet = new Set();
+        const statusSet = new Set();
+        const serviceNameSet = new Set();
+
+        data.forEach((item) => {
+          if (item.method) methodSet.add(item.method);
+          if (typeof item.status === "number") statusSet.add(item.status); // Ensure status is treated as a number
+          if (item.serviceName) serviceNameSet.add(item.serviceName);
+        });
+
+        populateDropdown("methodFilter", methodSet);
+        populateDropdown("statusFilter", statusSet);
+        populateDropdown("serviceNameFilter", serviceNameSet);
+      }
+      function populateDropdown(elementId, optionsSet) {
+        const selectElement = document.getElementById(elementId);
+        selectElement.innerHTML = '<option value="">Select</option>'; // Reset dropdown
+        optionsSet.forEach((option) => {
+          const optionElement = document.createElement("option");
+          optionElement.value = option;
+          optionElement.textContent = option;
+          selectElement.appendChild(optionElement);
+        });
+      }
+      let exportData = [];
+      function createTable(data) {
+        const tableHead = document.getElementById("tableHead");
+        const tableBody = document.getElementById("tableBody");
+
+        tableHead.innerHTML = "";
+        tableBody.innerHTML = "";
+
+        if (Array.isArray(data) && data.length > 0) {
+          const headers = Object.keys(data[0]);
+          const headerRow = document.createElement("tr");
+          headers.forEach((header) => {
+            const th = document.createElement("th");
+            th.textContent = header;
+            th.onclick = () => sortTable(header); // Add click event for sorting
+            const sortIndicator = document.createElement("span");
+            sortIndicator.className = "sort-indicator";
+            th.appendChild(sortIndicator);
+            headerRow.appendChild(th);
+          });
+          tableHead.appendChild(headerRow);
+
+          // Calculate start and end index for current page
+          const start = (currentPage - 1) * rowsPerPage;
+          const end = start + rowsPerPage;
+          const pageData = data.slice(start, end); // Get the data for the current page
+          exportData = pageData;
+          // console.table(exportData);
+
+          pageData.forEach((item) => {
+            const row = document.createElement("tr");
+            headers.forEach((header) => {
+              const td = document.createElement("td");
+              const cellContent = item[header];
+
+              // Set background color based on method or status
+
+
+              if (header === "method") {
+                if (localStorage.getItem('theme') === 'dark') {
+                  td.style.color = getColorForMethod(cellContent);
+                } else {
+                  td.style.backgroundColor = getColorForMethod(cellContent);
+                }
+              }
+              if (header === "status") {
+                if (localStorage.getItem('theme') === 'dark') {
+                  td.style.color = getColorForStatus(cellContent);
+                } else {
+                  td.style.backgroundColor = getColorForStatus(cellContent);
+                }
+              }
+
+              if (header === "serviceName") {
+                if (localStorage.getItem('theme') === 'dark') {
+                  td.style.color = getColorForCategory(cellContent);
+                } else {
+                  td.style.backgroundColor = getColorForCategory(cellContent);
+                  
+                }
+              }
+
+              
+
+              // Check for expandable keys
+              if (
+                expandableKeys.includes(header) &&
+                typeof cellContent === "string" &&
+                cellContent.length > truncateLimit || header === "source" && cellContent.length > 200
+              ) {
+                td.innerHTML = `<span class="text-preview">${cellContent.slice(
+                  0,
+                  truncateLimit
+                )}...</span>`;
+                const expandButton = document.createElement("button");
+                expandButton.textContent = "See more...";
+                expandButton.className = "expand-btn";
+                expandButton.onclick = () => toggleText(td, cellContent);
+                td.prepend(expandButton);
+              } else {
+                td.textContent = cellContent;
+              }
+              if (copyKey.includes(header) || expandableKeys.includes(header)) {
+                // Add click event to copy text
+                td.onclick = () => {
+                  navigator.clipboard
+                    .writeText(cellContent)
+                    .then(() => {
+                      // console.log("Text copied to clipboard: ", cellContent);
+                      // alert("Copied to clipboard: " + cellContent);
+                    })
+                    .catch((err) => {
+                      console.error("Failed to copy text: ", err);
+                    });
+                };
+                td.style.cursor = "pointer";
+              }
+
+              // Change cursor to pointer for clickable cells
+
+              row.appendChild(td);
+            });
+            tableBody.appendChild(row);
+          });
+        } else {
+          document.getElementById("output").innerText =
+            "Invalid or empty JSON data.";
+        }
+      }
+      function toggleText(td, fullText) {
+        const isExpanded = td.classList.contains("expanded");
+        const multilineContent = document.createElement("div");
+        multilineContent.className = "multiline-content";
+        
+        try {
+          const jsonObject = JSON.parse(fullText);
+          multilineContent.innerHTML = syntaxHighlight(JSON.stringify(jsonObject, null, 2)); // Pretty-print JSON with colors
+        } catch {
+          multilineContent.innerHTML = `<span style="color: #ce9178;">${fullText}</span>`; // Fallback to plain text with white color
+        }
+
+        td.innerHTML = isExpanded
+          ? `<span class="text-preview">${fullText.slice(
+              0,
+              truncateLimit
+            )}...</span>`
+          : multilineContent.outerHTML;
+
+        const toggleButton = document.createElement("button");
+        toggleButton.textContent = isExpanded ? "See more..." : "See less...";
+        toggleButton.className = "expand-btn";
+        toggleButton.onclick = () => toggleText(td, fullText);
+        td.prepend(toggleButton);
+        td.classList.toggle("expanded");
+}
+
+      function syntaxHighlight(json) {
+  json = json
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+  return json.replace(
+    /("(\\u[\da-fA-F]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|\b-?\d+(?:\.\d*)?(?:[eE][+-]?\d+)?\b|[{}[\],])/g,
+    (match) => {
+      let cls = "default";
+      if (/^"/.test(match)) {
+        if (/:$/.test(match)) {
+          cls = "key";
+        } else {
+          cls = "string";
+        }
+      } else if (/true|false/.test(match)) {
+        cls = "boolean";
+      } else if (/null/.test(match)) {
+        cls = "null";
+      } else if (/^-?\d+/.test(match)) {
+        cls = "number";
+      }
+      return `<span class="${cls}">${match}</span>`;
+    }
+  );
+}
+
+      function updateTable() {
+        const method = document.getElementById("methodFilter").value;
+        const status = document.getElementById("statusFilter").value;
+        const serviceName = document.getElementById("serviceNameFilter").value;
+        const requestID = document
+          .getElementById("requestIDFilter")
+          .value?.toLowerCase()
+          .trim();
+        const customerUuid = document
+          .getElementById("customerUuidFilter")
+          .value?.toLowerCase()
+          .trim();
+          const username = document
+          .getElementById("usernameFilter")
+          .value?.toLowerCase()
+          .trim();
+          const apiVersion = document
+          .getElementById("apiVersionFilter")
+          .value?.toLowerCase()
+          .trim();
+          const appVersion = document
+          .getElementById("appVersionFilter")
+          .value?.toLowerCase()
+          .trim();
+        const source = document
+          .getElementById("sourceFilter")
+          .value?.toLowerCase()
+          .trim();
+        const endpoint = document
+          .getElementById("endpointFilter")
+          .value?.toLowerCase()
+          .trim();
+        const header = document
+          .getElementById("HeaderFilter")
+          .value?.toLowerCase()
+          .trim();
+        const request = document
+          .getElementById("RequestDataFilter")
+          .value?.toLowerCase()
+          .trim();
+        const response = document
+          .getElementById("ResponseDataFilter")
+          .value?.toLowerCase()
+          .trim();
+        const createdAtStart = document.getElementById("createdAtStart").value;
+        filteredData = jsonData.filter((item) => {
+          console.log("item", item)
+          const matchesMethod = method ? item.method === method : true;
+          const matchesStatus = status ? item.status === Number(status) : true; // Convert to number for comparison
+          const matchesServiceName = serviceName
+            ? item.serviceName === serviceName
+            : true;
+          const matchesRequestID = requestID
+            ? item.requestID &&
+              item.requestID?.toLowerCase().includes(requestID)
+            : true;
+          const matchesUsername = username
+            ? item.username &&
+              item.username?.toLowerCase().includes(username)
+            : true;
+            const matchesApiVersion = apiVersion
+            ? item['x-api-version'] &&
+            item['x-api-version']?.toLowerCase().includes(apiVersion)
+            : true;
+            const matchesAppVersion = appVersion
+            ? item['x-app-version'] &&
+            item['x-app-version']?.toLowerCase().includes(appVersion)
+            : true;
+            const matchesCustomerUuid = customerUuid
+            ? item.customerUuid &&
+              item.customerUuid?.toLowerCase().includes(customerUuid)
+            : true;
+          const matchesSource = source
+            ? item.source && item.source?.toLowerCase().includes(source)
+            : true;
+          const matchesEndpoint = endpoint
+            ? item.endpoint && item.endpoint?.toLowerCase().includes(endpoint)
+            : true;
+          const matchesHeader = header
+            ? item.header && item.header?.toLowerCase().includes(header)
+            : true;
+          const matchesRequest = request
+            ? item.requestData &&
+              item.requestData?.toLowerCase().includes(request)
+            : true;
+          const matchesResponse = response
+            ? item.responseData &&
+              item.responseData?.toLowerCase().includes(response)
+            : true;
+          // Convert createdAt field and input values to Date objects for comparison
+          const createdAtDate = item.createdAt;
+          const startDate = createdAtStart ? new Date(createdAtStart) : null;
+          const day = startDate?.getDate(); // Day (1-31)
+          const month = startDate?.getMonth() + 1; // Month (0-11, so +1 for 1-12)
+          const year = startDate?.getFullYear();
+          const searchDate = `${day}/${month}/${year}`;
+
+          const matchesCreatedAtStart = startDate
+            ? createdAtDate.includes(searchDate)
+            : true;
+          return (
+            matchesMethod &&
+            matchesStatus &&
+            matchesServiceName &&
+            matchesRequestID &&
+            matchesCustomerUuid &&
+            matchesUsername &&
+            matchesApiVersion &&
+            matchesAppVersion &&
+            matchesSource &&
+            matchesEndpoint &&
+            matchesHeader &&
+            matchesRequest &&
+            matchesResponse &&
+            matchesCreatedAtStart
+          );
+        });
+
+        currentPage = 1; // Reset to first page after filtering
+        createTable(filteredData);
+        updatePagination();
+      }
+
+      function getColorForMethod(method) {
+        switch (method?.toLowerCase()) {
+          case "get":
+            return "#6cdd99"; // Light green for fetching data
+          case "post":
+            return "#ffe47e"; // Yellow for submitting data
+          case "put":
+            return "#74aef6"; // Light blue for updating data
+          case "delete":
+            return "#f79a8e"; // Red for deleting data
+          case "patch":
+            return "#c0a8e1"; // Light pink for partial updates
+          case "options":
+            return "#f15eb0"; // Light orange for pre-flight requests
+          case "head":
+            return "#6cdd99"; // Light green for retrieving headers
+          case "trace":
+            return "#ffeb3b"; // Light yellow for diagnostic purposes
+          case "connect":
+            return "#90caf9"; // Light blue for establishing connections
+          case "link":
+            return "#81d4fa"; // Light blue for linking resources
+          case "unlink":
+            return "#ff8a65"; // Light orange for unlinking resources
+
+          // Add more methods if needed
+          // Default color if method is not specified
+          default:
+            return "white"; // Black for unknown methods
+        }
+      }
+
+      function getColorForStatus(status) {
+        switch (Number(status)) {
+          // Informational responses (100-199)
+          case 100:
+            return "#d0e6ff"; // Light blue
+          case 101:
+            return "#d0e6ff"; // Light blue
+          case 102:
+            return "#d0e6ff"; // Light blue
+          case 103:
+            return "#d0e6ff"; // Light blue
+
+          // Successful responses (200-299)
+          case 200:
+            return "#71e66d"; // Light green
+          case 201:
+            return "#71e66d"; // Light green
+          case 202:
+            return "#71e66d"; // Light green
+          case 203:
+            return "#71e66d"; // Light green
+          case 204:
+            return "#71e66d"; // Light green
+          case 205:
+            return "#71e66d"; // Light green
+          case 206:
+            return "#71e66d"; // Light green
+          case 207:
+            return "#71e66d"; // Light green
+          case 208:
+            return "#71e66d"; // Light green
+          case 226:
+            return "#71e66d"; // Light green
+
+          // Redirection messages (300-399)
+          case 300:
+            return "#ffe57f"; // Light yellow
+          case 301:
+            return "#ffe57f"; // Light yellow
+          case 302:
+            return "#ffe57f"; // Light yellow
+          case 303:
+            return "#ffe57f"; // Light yellow
+          case 304:
+            return "#71e66d"; // Gray
+          case 305:
+            return "#ffe57f"; // Light yellow
+          case 306:
+            return "#ffe57f"; // Light yellow
+          case 307:
+            return "#ffe57f"; // Light yellow
+          case 308:
+            return "#ffe57f"; // Light yellow
+
+          // Client error responses (400-499)
+          case 400:
+            return "orange"; // Orange
+          case 401:
+            return "orange"; // Orange
+          case 402:
+            return "orange"; // Orange
+          case 403:
+            return "orange"; // Orange
+          case 404:
+            return "orange"; // Orange
+          case 405:
+            return "orange"; // Orange
+          case 406:
+            return "orange"; // Orange
+          case 407:
+            return "orange"; // Orange
+          case 408:
+            return "orange"; // Orange
+          case 409:
+            return "orange"; // Orange
+          case 410:
+            return "orange"; // Orange
+          case 411:
+            return "orange"; // Orange
+          case 412:
+            return "orange"; // Orange
+          case 413:
+            return "orange"; // Orange
+          case 414:
+            return "orange"; // Orange
+          case 415:
+            return "orange"; // Orange
+          case 416:
+            return "orange"; // Orange
+          case 417:
+            return "orange"; // Orange
+          case 426:
+            return "orange"; // Orange
+          case 422:
+            return "orange"; // Orange
+          case 428:
+            return "orange"; // Orange
+          case 429:
+            return "orange"; // Orange
+          case 431:
+            return "orange"; // Orange
+          case 451:
+            return "orange"; // Orange
+
+          // Server error responses (500-599)
+          case 500:
+            return "red"; // Red
+          case 501:
+            return "red"; // Red
+          case 502:
+            return "red"; // Red
+          case 503:
+            return "red"; // Red
+          case 504:
+            return "red"; // Red
+          case 505:
+            return "red"; // Red
+          case 506:
+            return "red"; // Red
+          case 507:
+            return "red"; // Red
+          case 508:
+            return "red"; // Red
+          case 511:
+            return "red"; // Red
+
+          // Default color if status is not specified
+          default:
+            return "white"; // Black for unknown status
+        }
+      }
+
+      function getColorForCategory(category) {
+  switch (category?.toLowerCase()) {
+    case "be-customer":
+      return "#A3D9B1"; // Soft mint green
+    case "be-pvd":
+      return "#FFE5B4"; // Soft apricot
+    case "be-admin":
+      return "#A6C8FF"; // Soft light blue
+    case "be-risk-profile":
+      return "#F8B8D0"; // Soft blush pink
+    case "be-salesforce":
+      return "#D8A9F1"; // Soft lavender
+    case "be-rsp":
+      return "#F1C2A3"; // Soft peach
+    case "be-payment":
+      return "#B3E2F5"; // Soft pale cyan
+    case "be-notification":
+      return "#F6D6A3"; // Soft butter yellow
+    case "be-kb-dso":
+      return "#D0F0C0"; // Soft celery green
+    case "be-invoice":
+      return "#FFEB99"; // Soft lemon yellow
+    case "be-order":
+      return "#D6E4D5"; // Soft sage green
+    case "be-otp":
+      return "#FFDAC1"; // Soft blush peach
+    case "be-email":
+      return "#B4E1F1"; // Soft sky blue
+    case "be-deeplink":
+      return "#F4B4D1"; // Soft coral pink
+    case "be-funds":
+      return "#C7B9F3"; // Soft pastel purple
+    default:
+      return "#F4F4F4"; // Very soft gray for unknown categories
+  }
+}
+
+      function updatePagination() {
+        const pageCount = Math.ceil(filteredData.length / rowsPerPage); // Calculate total pages
+
+        document.getElementById("prevPage").disabled = currentPage === 1;
+        document.getElementById("nextPage").disabled =
+          currentPage * rowsPerPage >= filteredData.length;
+        document.getElementById(
+          "pageInfo"
+        ).textContent = `Page ${currentPage} of ${Math.ceil(
+          filteredData.length / rowsPerPage
+        )}`;
+      }
+
+      function clearFilters() {
+        // Reset all filter inputs and dropdowns
+        document.getElementById("methodFilter").value = "";
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("serviceNameFilter").value = "";
+        document.getElementById("requestIDFilter").value = "";
+        document.getElementById("customerUuidFilter").value = "";
+        document.getElementById("usernameFilter").value = "";
+        document.getElementById("apiVersionFilter").value = "";
+        document.getElementById("appVersionFilter").value = "";
+        document.getElementById("sourceFilter").value = "";
+        document.getElementById("endpointFilter").value = "";
+        document.getElementById("HeaderFilter").value = "";
+        document.getElementById("RequestDataFilter").value = "";
+        document.getElementById("ResponseDataFilter").value = "";
+        document.getElementById("createdAtStart").value = "";
+
+        // Reset filtered data and rebuild table with the original jsonData
+        filteredData = jsonData;
+        currentPage = 1;
+        createTable(filteredData);
+        updatePagination();
+      }
+
+      function clearFile() {
+        // Clear the file input and reset the data variables
+        document.getElementById("fileInput").value = "";
+        jsonData = [];
+        filteredData = [];
+        currentPage = 1;
+        document.getElementById("output").innerText = "";
+
+        // Clear table and pagination display
+        document.getElementById("tableHead").innerHTML = "";
+        document.getElementById("tableBody").innerHTML = "";
+        document.getElementById("pageInfo").innerText = "";
+        document.getElementById("prevPage").disabled = true;
+        document.getElementById("nextPage").disabled = true;
+      }
+
+      function changePage(delta) {
+        currentPage += delta; // Change current page
+        createTable(filteredData); // Recreate table for new page
+        updatePagination(); // Update pagination controls
+      }
+      function exportJSONToXLSX() {
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+
+        XLSX.writeFile(workbook, `${toUTC7FileName()}`);
+      }
+
+      function sortTable(header) {
+        const currentDirection = sortDirection[header] || "asc";
+        const newDirection = currentDirection === "asc" ? "desc" : "asc";
+        sortDirection[header] = newDirection;
+
+        filteredData.sort((a, b) => {
+          if (typeof a[header] === "number" && typeof b[header] === "number") {
+            return newDirection === "asc"
+              ? a[header] - b[header]
+              : b[header] - a[header];
+          }
+          if (a[header] < b[header]) return newDirection === "asc" ? -1 : 1;
+          if (a[header] > b[header]) return newDirection === "asc" ? 1 : -1;
+          return 0;
+        });
+
+        createTable(filteredData);
+        updatePagination();
+      }
+      function excelDateToJSDate(excelSerialDate) {
+        const startDate = new Date(1900, 0, 1);
+        const days = Math.floor(excelSerialDate) - 1;
+        const dateInMs = startDate.getTime() + days * 24 * 60 * 60 * 1000;
+        const fractionOfDay = excelSerialDate - Math.floor(excelSerialDate);
+        const msInDay = fractionOfDay * 24 * 60 * 60 * 1000;
+        const dateString = new Date(dateInMs + msInDay);
+        return new Date(dateInMs + msInDay);
+      }
+      function toggleTheme() {
+    const body = document.body;
+    if (body.classList.contains('light-mode')) {
+      body.classList.remove('light-mode');
+      body.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      body.classList.remove('dark-mode');
+      body.classList.add('light-mode');
+      localStorage.setItem('theme', 'light');
+    }
+    updateTable()
+  }
+
+  // Preserve theme preference on reload
+  window.onload = () => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      document.body.classList.add(savedTheme === 'light' ? 'light-mode' : 'dark-mode');
+    } else {
+      document.body.classList.add('dark-mode'); // Default theme
+    }
+  };
+    </script>
+  </body>
+</html>
