@@ -801,7 +801,7 @@ body.light-mode #icon-moon {
 
         data.forEach((item) => {
           if (item.method) methodSet.add(item.method);
-          if (typeof item.status === "number") statusSet.add(item.status); // Ensure status is treated as a number
+          if (typeof item.status === "number") statusSet.add(item.status); 
           if (item.serviceName) serviceNameSet.add(item.serviceName);
         });
 
@@ -810,15 +810,23 @@ body.light-mode #icon-moon {
         populateDropdown("serviceNameFilter", serviceNameSet);
       }
       function populateDropdown(elementId, optionsSet) {
-        const selectElement = document.getElementById(elementId);
-        selectElement.innerHTML = '<option value="">Select</option>'; // Reset dropdown
-        optionsSet.forEach((option) => {
-          const optionElement = document.createElement("option");
-          optionElement.value = option;
-          optionElement.textContent = option;
-          selectElement.appendChild(optionElement);
-        });
-      }
+    const selectElement = document.getElementById(elementId);
+    selectElement.innerHTML = '<option value="">Select</option>';
+    const sortedOptions = [...optionsSet].sort((a, b) => {
+        if (typeof a === "number" && typeof b === "number") {
+            return a - b;
+        }
+        return a.toString().localeCompare(b.toString(), undefined, { numeric: true }); 
+    });
+
+    sortedOptions.forEach((option) => {
+        const optionElement = document.createElement("option");
+        optionElement.value = option;
+        optionElement.textContent = option;
+        selectElement.appendChild(optionElement);
+    });
+}
+
       let exportData = [];
       function createTable(data) {
         const tableHead = document.getElementById("tableHead");
